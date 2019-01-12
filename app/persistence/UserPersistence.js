@@ -9,8 +9,10 @@ const MSG_UPDATED_USER_DB = "Updated User";
 const MSG_FAILED_UPDATE_USER_DB = "Failed to update User";
 const MSG_GOT_USER_DB = "Found User with the given input parameters";
 const MSG_FAILED_GET_USER_DB = "Failed to find User with the given input parameters";
+const MSG_OR_USER_ON_DB_IS_EMPTY = "Or the User doesn't exist on the database";
 const MSG_GOT_USERS_DB = "Found Users with the given input parameters";
 const MSG_FAILED_GET_USERS_DB = "Failed to find Users with the given input parameters";
+const MSG_OR_USERS_ON_DB_IS_EMPTY = "Or the list of Users on the database is empty";
 const MSG_DELETED_USER_DB = "Deleted User with the given input parameters";
 const MSG_FAILED_DELETE_USER_DB = "Failed to delete User with the given input parameters";
 
@@ -30,14 +32,13 @@ var self = {
 
                 if (evalUtils.isValidVal(callback)) {
                     callback(true, resUser);
+                } else {
+                    callback(false, null);
                 }
             }
 
             var handleError = function() {
-
-                if (evalUtils.isValidVal(callback)) {
-                    callback(false, null);
-                }
+                callback(false, null);
             }
 
             if (evalUtils.isValidVal(email)) {
@@ -47,22 +48,28 @@ var self = {
                 dbRef.orderByChild('email').equalTo(email).once("value", function(snapshot) {
 
                     try {
-                        const keys = Object.keys(snapshot.val())
+
+                        if (!evalUtils.isValidVal(snapshot.val())) {
+                            logUtils.logMessage(TAG, `${MSG_FAILED_GET_USERS_DB} ${MSG_OR_USER_ON_DB_IS_EMPTY}`);
+                            handleSuccess();
+                        } else {
+                            const keys = Object.keys(snapshot.val())
                     
-                        if (keys != undefined) {
-                            resUser = snapshot.val()[keys[0]]
-                        
-                            if (resUser != null && resUser != undefined) {
-                                logUtils.logMessage(TAG, `${MSG_GOT_USER_DB}`);
-                                handleSuccess();
+                            if (evalUtils.isValidVal(keys)) {
+                                resUser = snapshot.val()[keys[0]]
+                            
+                                if (evalUtils.isValidVal(resUser)) {
+                                    logUtils.logMessage(TAG, `${MSG_GOT_USER_DB}`);
+                                    handleSuccess();
+                                } else {
+                                    logUtils.logMessage(TAG, `${MSG_FAILED_GET_USER_DB}`);
+                                    handleError();
+                                }
+        
                             } else {
                                 logUtils.logMessage(TAG, `${MSG_FAILED_GET_USER_DB}`);
                                 handleError();
                             }
-    
-                        } else {
-                            logUtils.logMessage(TAG, `${MSG_FAILED_GET_USER_DB}`);
-                            handleError();
                         }
 
                     } catch (err) {
@@ -101,14 +108,13 @@ var self = {
 
                 if (evalUtils.isValidVal(callback)) {
                     callback(true, resUsers);
+                } else {
+                    callback(false, null);
                 }
             }
 
             var handleError = function() {
-
-                if (evalUtils.isValidVal(callback)) {
-                    callback(false, null);
-                }
+                callback(false, null);
             }
 
             var db = frbAdmin.database();
@@ -117,22 +123,27 @@ var self = {
             dbRef.orderByChild('email').once("value", function(snapshot) {
 
                 try {
-                    const keys = Object.keys(snapshot.val())
+                    if (!evalUtils.isValidVal(snapshot.val())) {
+                        logUtils.logMessage(TAG, `${MSG_FAILED_GET_USER_DB} ${MSG_OR_USERS_ON_DB_IS_EMPTY}`);
+                        handleSuccess();
+                    } else {
+                        const keys = Object.keys(snapshot.val())
                     
-                    if (keys != undefined) {
-                        resUsers = Object.values(snapshot.val());
-                        
-                        if (resUsers != null && resUsers != undefined) {
-                            logUtils.logMessage(TAG, `${MSG_GOT_USERS_DB}`);
-                            handleSuccess();
+                        if (evalUtils.isValidVal(keys)) {
+                            resUsers = Object.values(snapshot.val());
+                            
+                            if (evalUtils.isValidList(resUsers)) {
+                                logUtils.logMessage(TAG, `${MSG_GOT_USERS_DB}`);
+                                handleSuccess();
+                            } else {
+                                logUtils.logMessage(TAG, `${MSG_FAILED_GET_USERS_DB} ${MSG_OR_USERS_ON_DB_IS_EMPTY}`);
+                                handleSuccess();
+                            }
+    
                         } else {
                             logUtils.logMessage(TAG, `${MSG_FAILED_GET_USERS_DB}`);
                             handleError();
                         }
-
-                    } else {
-                        logUtils.logMessage(TAG, `${MSG_FAILED_GET_USERS_DB}`);
-                        handleError();
                     }
 
                 } catch (err) {
@@ -165,14 +176,13 @@ var self = {
 
                 if (evalUtils.isValidVal(callback)) {
                     callback(true);
+                } else {
+                    callback(false);
                 }
             }
 
             var handleError = function() {
-
-                if (evalUtils.isValidVal(callback)) {
-                    callback(false);
-                }
+                callback(false);
             }
 
             if (evalUtils.isValidVal(name) &&
@@ -192,14 +202,14 @@ var self = {
                     var db = frbAdmin.database();
                     var usersRef = db.ref("users");
 
-                    if (success && user != null && user != undefined) {
+                    if (success && evalUtils.isValidVal(user)) {
                         user.name = update.name;
                         user.profilePic = update.profilePic;
                         user.email = update.email;
                         user.latestViewedNotification = update.latestViewedNotification;
                         user.updatedAt = new Date().toISOString();
 
-                        if (user.firebaseUid != undefined) {
+                        if (evalUtils.isValidVal(user.firebaseUid)) {
                             var userRef = usersRef.child(user.firebaseUid);
                             userRef.update(user, function(err) {
     
@@ -258,23 +268,22 @@ var self = {
 
                 if (evalUtils.isValidVal(callback)) {
                     callback(true);
+                } else {
+                    callback(false);
                 }
             }
 
             var handleError = function() {
-
-                if (evalUtils.isValidVal(callback)) {
-                    callback(false);
-                }
+                callback(false);
             }
 
             if (evalUtils.isValidVal(email)) {
                 
                 this.findUser(email, function(success, user) {
                     
-                    if (success && user != null && user != undefined) {
+                    if (success && evalUtils.isValidVal(user)) {
                         
-                        if (user.firebaseUid != undefined) {
+                        if (evalUtils.isValidVal(user.firebaseUid)) {
                             var db = frbAdmin.database();
                             var usersRef = db.ref("users");
 

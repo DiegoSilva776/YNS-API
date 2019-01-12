@@ -13,7 +13,7 @@
  * https://opensource.org/licenses/MIT
  */
 
-const APP_NAME = "YouperNotificationSystem - YNS API, v0.0.3"
+const APP_NAME = "YouperNotificationSystem - YNS API, v0.0.4"
 
 var express    = require('express');
 var helmet     = require('helmet');
@@ -25,6 +25,7 @@ var pathUtils = require('./utils/PathUtils');
 var dbUtils   = require('./utils/DbUtils');
 
 var userController = require('./controllers/UserController')
+var notificationController = require('./controllers/NotificationController')
 
 /**
  * Initialization
@@ -48,7 +49,7 @@ app.get('/api', (req, res) => {
   res.send(APP_NAME)
 });
 
-// User 
+// Users
 app.get('/api/users', (req, res) => {
   userController.findAll(req, res)
 });
@@ -72,6 +73,34 @@ app.delete('/api/users', [
   check('email').isEmail()
 ], (req, res) => {
   userController.deleteUser(req, res);
+});
+
+// Notifications
+app.get('/api/notifications', (req, res) => {
+  notificationController.findAll(req, res)
+});
+
+app.get('/api/notifications/:title/:scheduleTime', [
+  check('title').isString().isLength({ min: 1, max: 350 }),
+  check('scheduleTime').isString().isLength({ min: 1, max: 50 }),
+], (req, res) => {
+  notificationController.findNotification(req, res)
+});
+
+app.post('/api/notifications', [
+  check('title').isString().isLength({ min: 1, max: 350 }),
+  check('scheduleTime').isString().isLength({ min: 1, max: 50 }),
+  check('body').isString().isLength({ max: 3500 }),
+  check('dueDate').isString().isLength({ max: 50 }),
+], (req, res) => {
+  notificationController.upsertNotification(req, res);
+});
+
+app.delete('/api/notifications', [
+  check('title').isString().isLength({ min: 1, max: 350 }),
+  check('scheduleTime').isString().isLength({ min: 1, max: 50 }),
+], (req, res) => {
+  notificationController.deleteNotification(req, res);
 });
 
 /**

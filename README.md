@@ -48,7 +48,7 @@ Contents of the Dockerfile
 ```
    - > Get the url of the running container and make a few requests on Postman, or create a task to test the container
 
-   - > Deploy the image once it's successfully run locally
+   - > Deploy the image once it has successfully been executed locally
 ```
     heroku container:push web
     heroku container:release web

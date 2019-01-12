@@ -19,10 +19,6 @@ var UserSchema = new mongoose.Schema({
         isLength: {
             options: [{max: 200}],
             errorMessage: "The first name must be under 200 characters"
-        },
-        matches: {
-            options: ["^[a-z ,.'-]+$", "i"],
-            errorMessage: "The first name can only contain letters and the characters (,.'-)"
         }
     },
     profilePic : String,

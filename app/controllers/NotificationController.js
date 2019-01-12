@@ -1,43 +1,44 @@
 /**
- * Perform the Upsert, Find and Delete actions on objects of the class User
+ * Perform the Upsert, Find and Delete actions on objects of the class Notification
  */
 
-const TAG = "UserController";
+const TAG = "NotificationController";
 
 const MSG_SUCCESS = "Success";
 
-const MSG_FAILED_SAVE_USER_DB = "Failed to save User";
-const MSG_FAILED_GET_USER_DB = "Failed to find User with the given input parameters";
-const MSG_FAILED_GET_USERS_DB = "Failed to find Users with the given input parameters";
-const MSG_FAILED_DELETE_USER_DB = "Failed to delete User with the given input parameters";
+const MSG_FAILED_SAVE_NOTIFICATION_DB = "Failed to save Notification";
+const MSG_FAILED_GET_NOTIFICATION_DB = "Failed to find Notification with the given input parameters";
+const MSG_FAILED_GET_NOTIFICATIONS_DB = "Failed to find Notifications with the given input parameters";
+const MSG_FAILED_DELETE_NOTIFICATION_DB = "Failed to delete Notification with the given input parameters";
 
-const userPersistence = require('../persistence/UserPersistence.js');
+const notificationPersistence = require('../persistence/NotificationPersistence.js');
 
 const logUtils = require('../utils/LogUtils.js');
 const evalUtils = require('../utils/EvalUtils.js');
 
 var self = {
 
-    findUser: function (req, res) {
+    findNotification: function (req, res) {
         try {
             var response = {
                 status: evalUtils.STATUS_ERROR,
                 data: {},
-                msg: MSG_FAILED_GET_USER_DB
+                msg: MSG_FAILED_GET_NOTIFICATION_DB
             };
 
             if (!evalUtils.hasErrors(req, res)) {
 
-                userPersistence.findUser(
-                    req.params.email,
-                    function (success, user) {
+                notificationPersistence.findNotification(
+                    req.params.title,
+                    req.params.scheduleTime,
+                    function (success, notification) {
 
                         if (success) {
                             response.status = evalUtils.STATUS_SUCCESS;
                             response.msg = MSG_SUCCESS;
 
-                            if (evalUtils.isValidVal(user)) {
-                                response.data = user;
+                            if (evalUtils.isValidVal(notification)) {
+                                response.data = notification;
                             } else {
                                 response.data = {};
                             }
@@ -47,7 +48,7 @@ var self = {
                     }
                 );
             } else {
-                logUtils.logMessage(TAG, `${MSG_FAILED_GET_USER_DB} ${err}`);
+                logUtils.logMessage(TAG, `${MSG_FAILED_GET_NOTIFICATION_DB} ${err}`);
 
                 response.status = evalUtils.STATUS_FAILED_INPUT;
                 response.data = evalUtils.hasErrors(req, res).array()
@@ -56,7 +57,7 @@ var self = {
             }
 
         } catch (err) {
-            logUtils.logMessage(TAG, `${MSG_FAILED_GET_USER_DB} ${err}`);
+            logUtils.logMessage(TAG, `${MSG_FAILED_GET_NOTIFICATION_DB} ${err}`);
 
             res.send(response);
         }
@@ -67,19 +68,19 @@ var self = {
             var response = {
                 status: evalUtils.STATUS_ERROR,
                 data: {},
-                msg: MSG_FAILED_GET_USERS_DB
+                msg: MSG_FAILED_GET_NOTIFICATIONS_DB
             };
 
             if (!evalUtils.hasErrors(req, res)) {
-                userPersistence.findAll(
-                    function (success, users) {
+                notificationPersistence.findAll(
+                    function (success, notifications) {
 
                         if (success) {
                             response.status = evalUtils.STATUS_SUCCESS;
                             response.msg = MSG_SUCCESS;
 
-                            if (evalUtils.isValidVal(users)) {
-                                response.data = users;
+                            if (evalUtils.isValidVal(notifications)) {
+                                response.data = notifications;
                             } else {
                                 response.data = {};
                             }
@@ -89,7 +90,7 @@ var self = {
                     }
                 );
             } else {
-                logUtils.logMessage(TAG, `${MSG_FAILED_GET_USERS_DB} ${err}`);
+                logUtils.logMessage(TAG, `${MSG_FAILED_GET_NOTIFICATIONS_DB} ${err}`);
 
                 response.status = evalUtils.STATUS_FAILED_INPUT;
                 response.data = evalUtils.hasErrors(req, res).array()
@@ -98,28 +99,28 @@ var self = {
             }
 
         } catch (err) {
-            logUtils.logMessage(TAG, `${MSG_FAILED_GET_USERS_DB} ${err}`);
+            logUtils.logMessage(TAG, `${MSG_FAILED_GET_NOTIFICATIONS_DB} ${err}`);
 
             res.send(response);
         }
     },
 
-    upsertUser: function (req, res) {
+    upsertNotification: function (req, res) {
 
         try {
             var response = {
                 status: evalUtils.STATUS_ERROR,
                 data: {},
-                msg: MSG_FAILED_SAVE_USER_DB
+                msg: MSG_FAILED_SAVE_NOTIFICATION_DB
             };
 
             if (!evalUtils.hasErrors(req, res)) {
 
-                userPersistence.upsertUser(
-                    req.body.email,
-                    req.body.name,
-                    req.body.profilePic,
-                    req.body.latestNotification,
+                notificationPersistence.upsertNotification(
+                    req.body.title,
+                    req.body.scheduleTime,
+                    req.body.body,
+                    req.body.dueDate,
                     function (success) {
 
                         if (success) {
@@ -132,7 +133,7 @@ var self = {
                     }
                 );
             } else {
-                logUtils.logMessage(TAG, `${MSG_FAILED_SAVE_USER_DB} ${err}`);
+                logUtils.logMessage(TAG, `${MSG_FAILED_SAVE_NOTIFICATION_DB} ${err}`);
 
                 response.status = evalUtils.STATUS_FAILED_INPUT;
                 response.data = evalUtils.hasErrors(req, res).array()
@@ -141,23 +142,24 @@ var self = {
             }
 
         } catch (err) {
-            logUtils.logMessage(TAG, `${MSG_FAILED_SAVE_USER_DB} ${err}`);
+            logUtils.logMessage(TAG, `${MSG_FAILED_SAVE_NOTIFICATION_DB} ${err}`);
 
             res.send(response);
         }
     },
 
-    deleteUser: function (req, res) {
+    deleteNotification: function (req, res) {
         try {
             var response = {
                 status: evalUtils.STATUS_ERROR,
                 data: {},
-                msg: MSG_FAILED_DELETE_USER_DB
+                msg: MSG_FAILED_DELETE_NOTIFICATION_DB
             };
 
             if (!evalUtils.hasErrors(req, res)) {
-                userPersistence.deleteUser(
-                    req.body.email,
+                notificationPersistence.deleteNotification(
+                    req.body.title,
+                    req.body.scheduleTime,
                     function (success) {
 
                         if (success) {
@@ -170,7 +172,7 @@ var self = {
                     }
                 );
             } else {
-                logUtils.logMessage(TAG, `${MSG_FAILED_DELETE_USER_DB} ${err}`);
+                logUtils.logMessage(TAG, `${MSG_FAILED_DELETE_NOTIFICATION_DB} ${err}`);
 
                 response.status = evalUtils.STATUS_FAILED_INPUT;
                 response.data = evalUtils.hasErrors(req, res).array()
@@ -179,7 +181,7 @@ var self = {
             }
 
         } catch (err) {
-            logUtils.logMessage(TAG, `${MSG_FAILED_DELETE_USER_DB} ${err}`);
+            logUtils.logMessage(TAG, `${MSG_FAILED_DELETE_NOTIFICATION_DB} ${err}`);
 
             res.send(response);
         }
