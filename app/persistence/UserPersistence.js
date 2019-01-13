@@ -9,10 +9,10 @@ const MSG_UPDATED_USER_DB = "Updated User";
 const MSG_FAILED_UPDATE_USER_DB = "Failed to update User";
 const MSG_GOT_USER_DB = "Found User with the given input parameters";
 const MSG_FAILED_GET_USER_DB = "Failed to find User with the given input parameters";
-const MSG_OR_USER_ON_DB_IS_EMPTY = "Or the User doesn't exist on the database";
+const MSG_OR_USER_ON_DB_IS_EMPTY = "or the User doesn't exist on the database";
 const MSG_GOT_USERS_DB = "Found Users with the given input parameters";
 const MSG_FAILED_GET_USERS_DB = "Failed to find Users with the given input parameters";
-const MSG_OR_USERS_ON_DB_IS_EMPTY = "Or the list of Users on the database is empty";
+const MSG_OR_USERS_ON_DB_IS_EMPTY = "or the list of Users on the database is empty";
 const MSG_DELETED_USER_DB = "Deleted User with the given input parameters";
 const MSG_FAILED_DELETE_USER_DB = "Failed to delete User with the given input parameters";
 

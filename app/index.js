@@ -26,6 +26,7 @@ var dbUtils   = require('./utils/DbUtils');
 
 var userController = require('./controllers/UserController')
 var notificationController = require('./controllers/NotificationController')
+var userNotificationController = require('./controllers/UserNotificationController')
 
 /**
  * Initialization
@@ -101,6 +102,32 @@ app.delete('/api/notifications', [
   check('scheduleTime').isString().isLength({ min: 1, max: 50 }),
 ], (req, res) => {
   notificationController.deleteNotification(req, res);
+});
+
+// UserNotifications
+app.get('/api/userNotifications', (req, res) => {
+  userNotificationController.findAll(req, res)
+});
+
+app.get('/api/userNotifications/:userId/:notificationId', [
+  check('userId').isString().isLength({ min: 1, max: 50 }),
+  check('notificationId').isString().isLength({ min: 1, max: 50 })
+], (req, res) => {
+  userNotificationController.findUserNotification(req, res)
+});
+
+app.post('/api/userNotifications', [
+  check('user'),
+  check('notification')
+], (req, res) => {
+  userNotificationController.upsertUserNotification(req, res);
+});
+
+app.delete('/api/userNotifications', [
+  check('userId').isString().isLength({ min: 1, max: 50 }),
+  check('notificationId').isString().isLength({ min: 1, max: 50 })
+], (req, res) => {
+  userNotificationController.deleteUserNotification(req, res);
 });
 
 /**

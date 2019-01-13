@@ -1,7 +1,7 @@
  /**
  * Notification.
  * 
- * A Mongoose.Schema, maps the schema of the model to a collection on MongoDB.
+ * A Mongoose.Schema maps the schema of the model to a collection on MongoDB.
  */
 
 var mongoose = require('mongoose');

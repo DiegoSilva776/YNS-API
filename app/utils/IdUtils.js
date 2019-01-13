@@ -31,6 +31,15 @@ module.exports = {
         }
     },
 
+    getUserNotificationFirebaseId: function(userId, notificationId){
+        try {
+            return `${userId}_${notificationId}`;
+
+        } catch (err) {
+            return false;
+        }
+    },
+
     /**
      * Get a random integer between a range of numbers
      */
