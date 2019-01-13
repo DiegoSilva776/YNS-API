@@ -25,7 +25,7 @@ describe("Persistence", function() {
         it("Should upsert, find and delete Users", function(done) {
             // Upsert 1
             userPersistence.upsertUser(
-                "user1@email.com",
+                "test.user.1@email.com",
                 "User 1", 
                 "test_profilePic_1", 
                 "latestViewedNotification_1",
@@ -34,7 +34,7 @@ describe("Persistence", function() {
 
                     // Upsert 2
                     userPersistence.upsertUser(
-                        "user2@email.com",
+                        "test.user.2@email.com",
                         "User 2", 
                         "test_profilePic_2", 
                         "latestViewedNotification_2",
@@ -43,10 +43,10 @@ describe("Persistence", function() {
 
                             // Find one
                             userPersistence.findUser(
-                                "user1@email.com",
+                                "test.user.1@email.com",
                                 function(opStatus3, user) {
                                     expect(opStatus3).to.be.equal(true);
-                                    expect(user.email).to.be.equal("user1@email.com");
+                                    expect(user.email).to.be.equal("test.user.1@email.com",);
                                     expect(user.name).to.be.equal("User 1");
                                     expect(user.profilePic).to.be.equal("test_profilePic_1");
                                     expect(user.latestViewedNotification).to.be.equal("latestViewedNotification_1");
@@ -59,12 +59,12 @@ describe("Persistence", function() {
 
                                             // Delete
                                             userPersistence.deleteUser(
-                                                "user1@email.com",
+                                                "test.user.1@email.com",
                                                 function(opStatus5) {
                                                     expect(opStatus5).to.equal(true);
 
                                                     userPersistence.deleteUser(
-                                                        "user2@email.com",
+                                                        "test.user.2@email.com",
                                                         function(opStatus6) {
                                                             expect(opStatus6).to.equal(true);
         
@@ -160,7 +160,7 @@ describe("Persistence", function() {
         it("Should upsert, find and delete UserNotifications", function(done) {
 
             userPersistence.upsertUser(
-                "user1@email.com",
+                "test.user.1@email.com",
                 "User 1", 
                 "test_profilePic_1", 
                 "latestViewedNotification_1",
@@ -176,10 +176,10 @@ describe("Persistence", function() {
                             expect(opStatus2).to.be.equal(true);
         
                             userPersistence.findUser(
-                                "user1@email.com",
+                                "test.user.1@email.com",
                                 function(opStatus3, user) {
                                     expect(opStatus3).to.be.equal(true);
-                                    expect(user.email).to.be.equal("user1@email.com");
+                                    expect(user.email).to.be.equal("test.user.1@email.com",);
                                     expect(user.name).to.be.equal("User 1");
                                     expect(user.profilePic).to.be.equal("test_profilePic_1");
                                     expect(user.latestViewedNotification).to.be.equal("latestViewedNotification_1");
@@ -220,7 +220,7 @@ describe("Persistence", function() {
                                                                             expect(opStatus8).to.equal(true);
 
                                                                             userPersistence.deleteUser(
-                                                                                "user1@email.com",
+                                                                                "test.user.1@email.com",
                                                                                 function(opStatus9) {
                                                                                     expect(opStatus9).to.equal(true);
                                 

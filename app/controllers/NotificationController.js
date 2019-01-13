@@ -17,7 +17,7 @@ const logUtils = require('../utils/LogUtils.js');
 const evalUtils = require('../utils/EvalUtils.js');
 
 var self = {
-
+    
     findNotification: function (req, res) {
         try {
             var response = {
@@ -26,11 +26,11 @@ var self = {
                 msg: MSG_FAILED_GET_NOTIFICATION_DB
             };
 
-            if (!evalUtils.hasErrors(req, res)) {
+            if (!evalUtils.hasErrors(req)) {
 
                 notificationPersistence.findNotification(
-                    req.params.title,
-                    req.params.scheduleTime,
+                    evalUtils.cleanObj(req.params.title),
+                    evalUtils.cleanObj(req.params.scheduleTime),
                     function (success, notification) {
 
                         if (success) {
@@ -38,7 +38,7 @@ var self = {
                             response.msg = MSG_SUCCESS;
 
                             if (evalUtils.isValidVal(notification)) {
-                                response.data = notification;
+                                response.data = evalUtils.unescapeObj(notification);
                             } else {
                                 response.data = {};
                             }
@@ -48,10 +48,10 @@ var self = {
                     }
                 );
             } else {
-                logUtils.logMessage(TAG, `${MSG_FAILED_GET_NOTIFICATION_DB} ${err}`);
+                logUtils.logMessage(TAG, `${MSG_FAILED_GET_NOTIFICATION_DB}`);
 
                 response.status = evalUtils.STATUS_FAILED_INPUT;
-                response.data = evalUtils.hasErrors(req, res).array()
+                response.data = evalUtils.hasErrors(req);
 
                 res.send(response);
             }
@@ -71,7 +71,7 @@ var self = {
                 msg: MSG_FAILED_GET_NOTIFICATIONS_DB
             };
 
-            if (!evalUtils.hasErrors(req, res)) {
+            if (!evalUtils.hasErrors(req)) {
                 notificationPersistence.findAll(
                     function (success, notifications) {
 
@@ -80,7 +80,7 @@ var self = {
                             response.msg = MSG_SUCCESS;
 
                             if (evalUtils.isValidVal(notifications)) {
-                                response.data = notifications;
+                                response.data = evalUtils.unescapeObj(notifications);
                             } else {
                                 response.data = {};
                             }
@@ -90,10 +90,10 @@ var self = {
                     }
                 );
             } else {
-                logUtils.logMessage(TAG, `${MSG_FAILED_GET_NOTIFICATIONS_DB} ${err}`);
+                logUtils.logMessage(TAG, `${MSG_FAILED_GET_NOTIFICATIONS_DB}`);
 
                 response.status = evalUtils.STATUS_FAILED_INPUT;
-                response.data = evalUtils.hasErrors(req, res).array()
+                response.data = evalUtils.hasErrors(req);
 
                 res.send(response);
             }
@@ -114,13 +114,13 @@ var self = {
                 msg: MSG_FAILED_SAVE_NOTIFICATION_DB
             };
 
-            if (!evalUtils.hasErrors(req, res)) {
+            if (!evalUtils.hasErrors(req)) {
 
                 notificationPersistence.upsertNotification(
-                    req.body.title,
-                    req.body.scheduleTime,
-                    req.body.body,
-                    req.body.dueDate,
+                    evalUtils.cleanObj(req.body.title),
+                    evalUtils.cleanObj(req.body.scheduleTime),
+                    evalUtils.cleanObj(req.body.body),
+                    evalUtils.cleanObj(req.body.dueDate),
                     function (success) {
 
                         if (success) {
@@ -133,10 +133,10 @@ var self = {
                     }
                 );
             } else {
-                logUtils.logMessage(TAG, `${MSG_FAILED_SAVE_NOTIFICATION_DB} ${err}`);
+                logUtils.logMessage(TAG, `${MSG_FAILED_SAVE_NOTIFICATION_DB}`);
 
                 response.status = evalUtils.STATUS_FAILED_INPUT;
-                response.data = evalUtils.hasErrors(req, res).array()
+                response.data = evalUtils.hasErrors(req);
 
                 res.send(response);
             }
@@ -156,10 +156,10 @@ var self = {
                 msg: MSG_FAILED_DELETE_NOTIFICATION_DB
             };
 
-            if (!evalUtils.hasErrors(req, res)) {
+            if (!evalUtils.hasErrors(req)) {
                 notificationPersistence.deleteNotification(
-                    req.body.title,
-                    req.body.scheduleTime,
+                    evalUtils.cleanObj(req.body.title),
+                    evalUtils.cleanObj(req.body.scheduleTime),
                     function (success) {
 
                         if (success) {
@@ -172,10 +172,10 @@ var self = {
                     }
                 );
             } else {
-                logUtils.logMessage(TAG, `${MSG_FAILED_DELETE_NOTIFICATION_DB} ${err}`);
+                logUtils.logMessage(TAG, `${MSG_FAILED_DELETE_NOTIFICATION_DB}`);
 
                 response.status = evalUtils.STATUS_FAILED_INPUT;
-                response.data = evalUtils.hasErrors(req, res).array()
+                response.data = evalUtils.hasErrors(req);
 
                 res.send(response);
             }

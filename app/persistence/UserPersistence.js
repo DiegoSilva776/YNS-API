@@ -23,12 +23,12 @@ const evalUtils = require('../utils/EvalUtils.js');
 
 var self = {
 
-    findUser : function (email, callback) {
+    findUser: function (email, callback) {
         try {
             var resUser = null;
 
             // Possible responses
-            var handleSuccess = function() {
+            var handleSuccess = function () {
 
                 if (evalUtils.isValidVal(callback)) {
                     callback(true, resUser);
@@ -37,7 +37,7 @@ var self = {
                 }
             }
 
-            var handleError = function() {
+            var handleError = function () {
                 callback(false, null);
             }
 
@@ -45,7 +45,7 @@ var self = {
                 var db = frbAdmin.database();
                 var dbRef = db.ref("users");
 
-                dbRef.orderByChild('email').equalTo(email).once("value", function(snapshot) {
+                dbRef.orderByChild('email').equalTo(email).once("value", function (snapshot) {
 
                     try {
 
@@ -54,10 +54,10 @@ var self = {
                             handleSuccess();
                         } else {
                             const keys = Object.keys(snapshot.val())
-                    
+
                             if (evalUtils.isValidVal(keys)) {
                                 resUser = snapshot.val()[keys[0]]
-                            
+
                                 if (evalUtils.isValidVal(resUser)) {
                                     logUtils.logMessage(TAG, `${MSG_GOT_USER_DB}`);
                                     handleSuccess();
@@ -65,7 +65,7 @@ var self = {
                                     logUtils.logMessage(TAG, `${MSG_FAILED_GET_USER_DB}`);
                                     handleError();
                                 }
-        
+
                             } else {
                                 logUtils.logMessage(TAG, `${MSG_FAILED_GET_USER_DB}`);
                                 handleError();
@@ -94,17 +94,17 @@ var self = {
             } else {
                 logUtils.logMessage(TAG, MSG_FAILED_GET_USER_DB);
             }
-            
+
             handleError();
         }
     },
 
-    findAll : function (callback) {
+    findAll: function (callback) {
         try {
             var resUsers = null;
 
             // Possible responses
-            var handleSuccess = function() {
+            var handleSuccess = function () {
 
                 if (evalUtils.isValidVal(callback)) {
                     callback(true, resUsers);
@@ -113,36 +113,28 @@ var self = {
                 }
             }
 
-            var handleError = function() {
+            var handleError = function () {
                 callback(false, null);
             }
 
             var db = frbAdmin.database();
             var dbRef = db.ref("users");
 
-            dbRef.orderByChild('email').once("value", function(snapshot) {
+            dbRef.orderByChild('email').once("value", function (snapshot) {
 
                 try {
                     if (!evalUtils.isValidVal(snapshot.val())) {
                         logUtils.logMessage(TAG, `${MSG_FAILED_GET_USER_DB} ${MSG_OR_USERS_ON_DB_IS_EMPTY}`);
                         handleSuccess();
                     } else {
-                        const keys = Object.keys(snapshot.val())
-                    
-                        if (evalUtils.isValidVal(keys)) {
-                            resUsers = Object.values(snapshot.val());
-                            
-                            if (evalUtils.isValidList(resUsers)) {
-                                logUtils.logMessage(TAG, `${MSG_GOT_USERS_DB}`);
-                                handleSuccess();
-                            } else {
-                                logUtils.logMessage(TAG, `${MSG_FAILED_GET_USERS_DB} ${MSG_OR_USERS_ON_DB_IS_EMPTY}`);
-                                handleSuccess();
-                            }
-    
+                        resUsers = Object.values(snapshot.val());
+
+                        if (evalUtils.isValidList(resUsers)) {
+                            logUtils.logMessage(TAG, `${MSG_GOT_USERS_DB}`);
+                            handleSuccess();
                         } else {
-                            logUtils.logMessage(TAG, `${MSG_FAILED_GET_USERS_DB}`);
-                            handleError();
+                            logUtils.logMessage(TAG, `${MSG_FAILED_GET_USERS_DB} ${MSG_OR_USERS_ON_DB_IS_EMPTY}`);
+                            handleSuccess();
                         }
                     }
 
@@ -163,16 +155,16 @@ var self = {
             } else {
                 logUtils.logMessage(TAG, MSG_FAILED_GET_USERS_DB);
             }
-            
+
             handleError();
         }
     },
 
-    upsertUser : function (email, name, profilePic, latestViewedNotification, callback) {
+    upsertUser: function (email, name, profilePic, latestViewedNotification, callback) {
 
         try {
             // Possible responses
-            var handleSuccess = function() {
+            var handleSuccess = function () {
 
                 if (evalUtils.isValidVal(callback)) {
                     callback(true);
@@ -181,7 +173,7 @@ var self = {
                 }
             }
 
-            var handleError = function() {
+            var handleError = function () {
                 callback(false);
             }
 
@@ -191,14 +183,14 @@ var self = {
                 evalUtils.isValidVal(latestViewedNotification)) {
 
                 var update = {
-                    name: name, 
-                    profilePic: profilePic, 
+                    name: name,
+                    profilePic: profilePic,
                     email: email,
                     latestViewedNotification: latestViewedNotification,
                     updatedAt: new Date().toISOString()
                 };
 
-                this.findUser(email, function(success, user) {
+                this.findUser(email, function (success, user) {
                     var db = frbAdmin.database();
                     var usersRef = db.ref("users");
 
@@ -211,8 +203,8 @@ var self = {
 
                         if (evalUtils.isValidVal(user.firebaseUid)) {
                             var userRef = usersRef.child(user.firebaseUid);
-                            userRef.update(user, function(err) {
-    
+                            userRef.update(user, function (err) {
+
                                 if (!err) {
                                     logUtils.logMessage(TAG, `${MSG_UPDATED_USER_DB}`);
                                     handleSuccess();
@@ -234,7 +226,7 @@ var self = {
                         var newUserRef = usersRef.push();
                         update.firebaseUid = newUserRef.getKey()
                         newUserRef.set(update);
-                        
+
                         logUtils.logMessage(TAG, `${MSG_CREATED_USER_DB}`);
                         handleSuccess();
                     }
@@ -256,15 +248,15 @@ var self = {
             } else {
                 logUtils.logMessage(TAG, MSG_FAILED_SAVE_USER_DB);
             }
-                
+
             handleError();
         }
     },
 
-    deleteUser : function (email, callback) {
+    deleteUser: function (email, callback) {
         try {
             // Possible responses
-            var handleSuccess = function() {
+            var handleSuccess = function () {
 
                 if (evalUtils.isValidVal(callback)) {
                     callback(true);
@@ -273,23 +265,23 @@ var self = {
                 }
             }
 
-            var handleError = function() {
+            var handleError = function () {
                 callback(false);
             }
 
             if (evalUtils.isValidVal(email)) {
-                
-                this.findUser(email, function(success, user) {
-                    
+
+                this.findUser(email, function (success, user) {
+
                     if (success && evalUtils.isValidVal(user)) {
-                        
+
                         if (evalUtils.isValidVal(user.firebaseUid)) {
                             var db = frbAdmin.database();
                             var usersRef = db.ref("users");
 
                             var userRef = usersRef.child(user.firebaseUid);
-                            userRef.set({}, function(err) {
-    
+                            userRef.set({}, function (err) {
+
                                 if (!err) {
                                     logUtils.logMessage(TAG, `${MSG_DELETED_USER_DB}`);
                                     handleSuccess();
@@ -326,7 +318,7 @@ var self = {
             } else {
                 logUtils.logMessage(TAG, MSG_FAILED_DELETE_USER_DB);
             }
-            
+
             handleError();
         }
     }

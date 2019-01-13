@@ -26,11 +26,11 @@ var self = {
                 msg: MSG_FAILED_GET_USER_NOTIFICATION_DB
             };
 
-            if (!evalUtils.hasErrors(req, res)) {
+            if (!evalUtils.hasErrors(req)) {
 
                 userNotificationPersistence.findUserNotification(
-                    req.params.userId,
-                    req.params.notificationId,
+                    evalUtils.cleanObj(req.params.userId),
+                    evalUtils.cleanObj(req.params.notificationId),
                     function (success, userNotification) {
 
                         if (success) {
@@ -38,7 +38,7 @@ var self = {
                             response.msg = MSG_SUCCESS;
 
                             if (evalUtils.isValidVal(userNotification)) {
-                                response.data = userNotification;
+                                response.data = evalUtils.unescapeObj(userNotification);
                             } else {
                                 response.data = {};
                             }
@@ -48,10 +48,10 @@ var self = {
                     }
                 );
             } else {
-                logUtils.logMessage(TAG, `${MSG_FAILED_GET_USER_NOTIFICATION_DB} ${err}`);
+                logUtils.logMessage(TAG, `${MSG_FAILED_GET_USER_NOTIFICATION_DB}`);
 
                 response.status = evalUtils.STATUS_FAILED_INPUT;
-                response.data = evalUtils.hasErrors(req, res).array();
+                response.data = evalUtils.hasErrors(req);
 
                 res.send(response);
             }
@@ -71,7 +71,7 @@ var self = {
                 msg: MSG_FAILED_GET_USER_NOTIFICATIONS_DB
             };
 
-            if (!evalUtils.hasErrors(req, res)) {
+            if (!evalUtils.hasErrors(req)) {
                 userNotificationPersistence.findAll(
                     function (success, userNotifications) {
 
@@ -80,7 +80,7 @@ var self = {
                             response.msg = MSG_SUCCESS;
 
                             if (evalUtils.isValidVal(userNotifications)) {
-                                response.data = userNotifications;
+                                response.data = evalUtils.unescapeObj(userNotifications);
                             } else {
                                 response.data = {};
                             }
@@ -90,10 +90,10 @@ var self = {
                     }
                 );
             } else {
-                logUtils.logMessage(TAG, `${MSG_FAILED_GET_USER_NOTIFICATIONS_DB} ${err}`);
+                logUtils.logMessage(TAG, `${MSG_FAILED_GET_USER_NOTIFICATIONS_DB}`);
 
                 response.status = evalUtils.STATUS_FAILED_INPUT;
-                response.data = evalUtils.hasErrors(req, res).array()
+                response.data = evalUtils.hasErrors(req);
 
                 res.send(response);
             }
@@ -114,11 +114,11 @@ var self = {
                 msg: MSG_FAILED_SAVE_USER_NOTIFICATION_DB
             };
 
-            if (!evalUtils.hasErrors(req, res)) {
+            if (!evalUtils.hasErrors(req)) {
 
                 userNotificationPersistence.upsertUserNotification(
-                    req.body.user,
-                    req.body.notification,
+                    evalUtils.cleanObj(req.body.user),
+                    evalUtils.cleanObj(req.body.notification),
                     function (success) {
 
                         if (success) {
@@ -131,10 +131,10 @@ var self = {
                     }
                 );
             } else {
-                logUtils.logMessage(TAG, `${MSG_FAILED_SAVE_USER_NOTIFICATION_DB} ${err}`);
+                logUtils.logMessage(TAG, `${MSG_FAILED_SAVE_USER_NOTIFICATION_DB}`);
 
                 response.status = evalUtils.STATUS_FAILED_INPUT;
-                response.data = evalUtils.hasErrors(req, res).array()
+                response.data = evalUtils.hasErrors(req);
 
                 res.send(response);
             }
@@ -154,10 +154,10 @@ var self = {
                 msg: MSG_FAILED_DELETE_USER_NOTIFICATION_DB
             };
 
-            if (!evalUtils.hasErrors(req, res)) {
+            if (!evalUtils.hasErrors(req)) {
                 userNotificationPersistence.deleteUserNotification(
-                    req.body.userId,
-                    req.body.notificationId,
+                    evalUtils.cleanObj(req.body.userId),
+                    evalUtils.cleanObj(req.body.notificationId),
                     function (success) {
 
                         if (success) {
@@ -170,10 +170,10 @@ var self = {
                     }
                 );
             } else {
-                logUtils.logMessage(TAG, `${MSG_FAILED_DELETE_USER_NOTIFICATION_DB} ${err}`);
+                logUtils.logMessage(TAG, `${MSG_FAILED_DELETE_USER_NOTIFICATION_DB}`);
 
                 response.status = evalUtils.STATUS_FAILED_INPUT;
-                response.data = evalUtils.hasErrors(req, res).array()
+                response.data = evalUtils.hasErrors(req);
 
                 res.send(response);
             }

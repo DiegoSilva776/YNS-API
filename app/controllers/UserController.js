@@ -26,10 +26,10 @@ var self = {
                 msg: MSG_FAILED_GET_USER_DB
             };
 
-            if (!evalUtils.hasErrors(req, res)) {
+            if (!evalUtils.hasErrors(req)) {
 
                 userPersistence.findUser(
-                    req.params.email,
+                    evalUtils.cleanObj(req.params.email),
                     function (success, user) {
 
                         if (success) {
@@ -37,7 +37,7 @@ var self = {
                             response.msg = MSG_SUCCESS;
 
                             if (evalUtils.isValidVal(user)) {
-                                response.data = user;
+                                response.data = evalUtils.unescapeObj(user);
                             } else {
                                 response.data = {};
                             }
@@ -47,10 +47,10 @@ var self = {
                     }
                 );
             } else {
-                logUtils.logMessage(TAG, `${MSG_FAILED_GET_USER_DB} ${err}`);
+                logUtils.logMessage(TAG, `${MSG_FAILED_GET_USER_DB}`);
 
                 response.status = evalUtils.STATUS_FAILED_INPUT;
-                response.data = evalUtils.hasErrors(req, res).array()
+                response.data = evalUtils.hasErrors(req);
 
                 res.send(response);
             }
@@ -70,7 +70,7 @@ var self = {
                 msg: MSG_FAILED_GET_USERS_DB
             };
 
-            if (!evalUtils.hasErrors(req, res)) {
+            if (!evalUtils.hasErrors(req)) {
                 userPersistence.findAll(
                     function (success, users) {
 
@@ -79,7 +79,7 @@ var self = {
                             response.msg = MSG_SUCCESS;
 
                             if (evalUtils.isValidVal(users)) {
-                                response.data = users;
+                                response.data = evalUtils.unescapeObj(users);
                             } else {
                                 response.data = {};
                             }
@@ -89,10 +89,10 @@ var self = {
                     }
                 );
             } else {
-                logUtils.logMessage(TAG, `${MSG_FAILED_GET_USERS_DB} ${err}`);
+                logUtils.logMessage(TAG, `${MSG_FAILED_GET_USERS_DB}`);
 
                 response.status = evalUtils.STATUS_FAILED_INPUT;
-                response.data = evalUtils.hasErrors(req, res).array()
+                response.data = evalUtils.hasErrors(req);
 
                 res.send(response);
             }
@@ -113,13 +113,13 @@ var self = {
                 msg: MSG_FAILED_SAVE_USER_DB
             };
 
-            if (!evalUtils.hasErrors(req, res)) {
+            if (!evalUtils.hasErrors(req)) {
 
                 userPersistence.upsertUser(
-                    req.body.email,
-                    req.body.name,
-                    req.body.profilePic,
-                    req.body.latestNotification,
+                    evalUtils.cleanObj(req.body.email),
+                    evalUtils.cleanObj(req.body.name),
+                    evalUtils.cleanObj(req.body.profilePic),
+                    evalUtils.cleanObj(req.body.latestNotification),
                     function (success) {
 
                         if (success) {
@@ -132,10 +132,10 @@ var self = {
                     }
                 );
             } else {
-                logUtils.logMessage(TAG, `${MSG_FAILED_SAVE_USER_DB} ${err}`);
+                logUtils.logMessage(TAG, `${MSG_FAILED_SAVE_USER_DB}`);
 
                 response.status = evalUtils.STATUS_FAILED_INPUT;
-                response.data = evalUtils.hasErrors(req, res).array()
+                response.data = evalUtils.hasErrors(req);
 
                 res.send(response);
             }
@@ -155,9 +155,9 @@ var self = {
                 msg: MSG_FAILED_DELETE_USER_DB
             };
 
-            if (!evalUtils.hasErrors(req, res)) {
+            if (!evalUtils.hasErrors(req)) {
                 userPersistence.deleteUser(
-                    req.body.email,
+                    evalUtils.cleanObj(req.body.email),
                     function (success) {
 
                         if (success) {
@@ -170,10 +170,10 @@ var self = {
                     }
                 );
             } else {
-                logUtils.logMessage(TAG, `${MSG_FAILED_DELETE_USER_DB} ${err}`);
+                logUtils.logMessage(TAG, `${MSG_FAILED_DELETE_USER_DB}`);
 
                 response.status = evalUtils.STATUS_FAILED_INPUT;
-                response.data = evalUtils.hasErrors(req, res).array()
+                response.data = evalUtils.hasErrors(req);
 
                 res.send(response);
             }

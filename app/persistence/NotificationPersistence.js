@@ -23,12 +23,12 @@ const evalUtils = require('../utils/EvalUtils.js');
 
 var self = {
 
-    findNotification : function (title, scheduleTime, callback) {
+    findNotification: function (title, scheduleTime, callback) {
         try {
             var resNotification = null;
 
             // Possible responses
-            var handleSuccess = function() {
+            var handleSuccess = function () {
 
                 if (evalUtils.isValidVal(callback)) {
                     callback(true, resNotification);
@@ -37,7 +37,7 @@ var self = {
                 }
             }
 
-            var handleError = function() {
+            var handleError = function () {
                 callback(false, null);
             }
 
@@ -46,7 +46,7 @@ var self = {
                 var db = frbAdmin.database();
                 var dbRef = db.ref("notifications");
 
-                dbRef.orderByChild('title').equalTo(title).once("value", function(snapshot) {
+                dbRef.orderByChild('title').equalTo(title).once("value", function (snapshot) {
 
                     try {
 
@@ -55,10 +55,10 @@ var self = {
                             handleSuccess();
                         } else {
                             const keys = Object.keys(snapshot.val())
-                        
+
                             if (keys != undefined) {
                                 resNotification = snapshot.val()[keys[0]]
-                            
+
                                 if (evalUtils.isValidVal(resNotification)) {
 
                                     if (evalUtils.isValidVal(resNotification.scheduleTime) && resNotification.scheduleTime == scheduleTime) {
@@ -68,12 +68,12 @@ var self = {
                                         logUtils.logMessage(TAG, `${MSG_FAILED_GET_NOTIFICATION_DB}`);
                                         handleError();
                                     }
-                                    
+
                                 } else {
                                     logUtils.logMessage(TAG, `${MSG_FAILED_GET_NOTIFICATION_DB}`);
                                     handleError();
                                 }
-        
+
                             } else {
                                 logUtils.logMessage(TAG, `${MSG_FAILED_GET_NOTIFICATION_DB}`);
                                 handleError();
@@ -102,17 +102,17 @@ var self = {
             } else {
                 logUtils.logMessage(TAG, MSG_FAILED_GET_NOTIFICATION_DB);
             }
-            
+
             handleError();
         }
     },
 
-    findAll : function (callback) {
+    findAll: function (callback) {
         try {
             var resNotifications = null;
 
             // Possible responses
-            var handleSuccess = function() {
+            var handleSuccess = function () {
 
                 if (evalUtils.isValidVal(callback)) {
                     callback(true, resNotifications);
@@ -121,34 +121,26 @@ var self = {
                 }
             }
 
-            var handleError = function() {
+            var handleError = function () {
                 callback(false, null);
             }
 
             var db = frbAdmin.database();
             var dbRef = db.ref("notifications");
 
-            dbRef.orderByChild('title').once("value", function(snapshot) {
+            dbRef.orderByChild('title').once("value", function (snapshot) {
 
                 try {
-                    
+
                     if (!evalUtils.isValidVal(snapshot.val())) {
                         logUtils.logMessage(TAG, `${MSG_FAILED_GET_NOTIFICATIONS_DB} ${MSG_OR_NOTIFICATIONS_ON_DB_IS_EMPTY}`);
                         handleSuccess();
                     } else {
-                        const keys = Object.keys(snapshot.val())
-                    
-                        if (evalUtils.isValidVal(keys)) {
-                            resNotifications = Object.values(snapshot.val());
-                            
-                            if (evalUtils.isValidVal(resNotifications)) {
-                                logUtils.logMessage(TAG, `${MSG_GOT_NOTIFICATIONS_DB}`);
-                                handleSuccess();
-                            } else {
-                                logUtils.logMessage(TAG, `${MSG_FAILED_GET_NOTIFICATIONS_DB}`);
-                                handleError();
-                            }
-    
+                        resNotifications = Object.values(snapshot.val());
+
+                        if (evalUtils.isValidVal(resNotifications)) {
+                            logUtils.logMessage(TAG, `${MSG_GOT_NOTIFICATIONS_DB}`);
+                            handleSuccess();
                         } else {
                             logUtils.logMessage(TAG, `${MSG_FAILED_GET_NOTIFICATIONS_DB}`);
                             handleError();
@@ -172,16 +164,16 @@ var self = {
             } else {
                 logUtils.logMessage(TAG, MSG_FAILED_GET_NOTIFICATIONS_DB);
             }
-            
+
             handleError();
         }
     },
 
-    upsertNotification : function (title, scheduleTime, body, dueDate, callback) {
+    upsertNotification: function (title, scheduleTime, body, dueDate, callback) {
 
         try {
             // Possible responses
-            var handleSuccess = function() {
+            var handleSuccess = function () {
 
                 if (evalUtils.isValidVal(callback)) {
                     callback(true);
@@ -190,7 +182,7 @@ var self = {
                 }
             }
 
-            var handleError = function() {
+            var handleError = function () {
                 callback(false);
             }
 
@@ -200,14 +192,14 @@ var self = {
                 evalUtils.isValidVal(dueDate)) {
 
                 var update = {
-                    title: title, 
-                    scheduleTime: scheduleTime, 
+                    title: title,
+                    scheduleTime: scheduleTime,
                     body: body,
                     dueDate: dueDate,
                     updatedAt: new Date().toISOString()
                 };
 
-                this.findNotification(title, scheduleTime, function(success, notification) {
+                this.findNotification(title, scheduleTime, function (success, notification) {
                     var db = frbAdmin.database();
                     var notificationsRef = db.ref("notifications");
 
@@ -220,8 +212,8 @@ var self = {
 
                         if (evalUtils.isValidVal(notification.firebaseUid)) {
                             var notificationRef = notificationsRef.child(notification.firebaseUid);
-                            notificationRef.update(notification, function(err) {
-    
+                            notificationRef.update(notification, function (err) {
+
                                 if (!err) {
                                     logUtils.logMessage(TAG, `${MSG_UPDATED_NOTIFICATION_DB}`);
                                     handleSuccess();
@@ -243,7 +235,7 @@ var self = {
                         var newNotificationRef = notificationsRef.push();
                         update.firebaseUid = newNotificationRef.getKey()
                         newNotificationRef.set(update);
-                        
+
                         logUtils.logMessage(TAG, `${MSG_CREATED_NOTIFICATION_DB}`);
                         handleSuccess();
                     }
@@ -265,15 +257,15 @@ var self = {
             } else {
                 logUtils.logMessage(TAG, MSG_FAILED_SAVE_NOTIFICATION_DB);
             }
-                
+
             handleError();
         }
     },
 
-    deleteNotification : function (title, scheduleTime, callback) {
+    deleteNotification: function (title, scheduleTime, callback) {
         try {
             // Possible responses
-            var handleSuccess = function() {
+            var handleSuccess = function () {
 
                 if (evalUtils.isValidVal(callback)) {
                     callback(true);
@@ -282,24 +274,24 @@ var self = {
                 }
             }
 
-            var handleError = function() {
+            var handleError = function () {
                 callback(false);
             }
 
             if (evalUtils.isValidVal(title),
                 evalUtils.isValidVal(scheduleTime)) {
-                
-                this.findNotification(title, scheduleTime, function(success, notification) {
-                    
+
+                this.findNotification(title, scheduleTime, function (success, notification) {
+
                     if (success && evalUtils.isValidVal(notification)) {
-                        
+
                         if (evalUtils.isValidVal(notification.firebaseUid)) {
                             var db = frbAdmin.database();
                             var notificationsRef = db.ref("notifications");
 
                             var notificationRef = notificationsRef.child(notification.firebaseUid);
-                            notificationRef.set({}, function(err) {
-    
+                            notificationRef.set({}, function (err) {
+
                                 if (!err) {
                                     logUtils.logMessage(TAG, `${MSG_DELETED_NOTIFICATION_DB}`);
                                     handleSuccess();
@@ -336,7 +328,7 @@ var self = {
             } else {
                 logUtils.logMessage(TAG, MSG_FAILED_DELETE_NOTIFICATION_DB);
             }
-            
+
             handleError();
         }
     }
