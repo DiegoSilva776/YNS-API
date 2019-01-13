@@ -4,69 +4,51 @@
 
 const TAG = "DbUtils";
 
-const MSG_FAILED_OPEN_NEW_CONNECT_TO_MONGO = "Failed to open a new connection to MongoDB. ";
+const MSG_FAILED_OPEN_NEW_CONNECT_TO_FIREBASE = "Failed while connecting to Firebase. ";
 
-var mongoose = require('mongoose');
+var firebaseAdmin = require("firebase-admin");
 
 var env = require('./EnvUtils');
 var logUtils = require('./LogUtils');
 var evalUtils = require('./EvalUtils');
 
+var isConnectedFirebase = false;
+
 module.exports = {
 
     /**
-     * Verify the state of the default connection and start a new one if necessary.
+     * Connects the API to Firebase and its services
      */
     connectToFirebaseDB: function() {
         var success = true;
         
         try {
-            /*
-            const connString = `mongodb://${env.vars.DB_IP}:${env.vars.DB_PORT}/${env.vars.DB_NAME}`;
-            const connOptions = { 
-                bufferCommands: false,
-                useNewUrlParser: true,
-                keepAlive: false,
-                poolSize: 30,
-                connectTimeoutMS: 10000, 
-                bufferMaxEntries: 0,
-                reconnectTries: 30
-            };
+            var serviceAccount = require(env.vars.FIREBASE_CRED_PATH);
 
-            if (MONGOOSE_CONN_STATE_DISCONNECTED === mongoose.connection.readyState) {
-                mongoose.connect(connString, connOptions, function () {}).catch(function(){});
-                logUtils.logMessage(TAG, MSG_CONNECTING_MONGOOSE);
-            }
-            */
+            firebaseAdmin.initializeApp({
+                credential: firebaseAdmin.credential.cert(serviceAccount),
+                databaseURL: env.vars.FIREBASE_PROJ_URL
+            });
+
+            isConnectedFirebase = true;
 
         } catch (err) {
 
             if (evalUtils.isValidVal(err)) {
-                logUtils.logMessage(TAG, `${MSG_FAILED_OPEN_NEW_CONNECT_TO_MONGO} ${err}`);
+                logUtils.logMessage(TAG, `${MSG_FAILED_OPEN_NEW_CONNECT_TO_FIREBASE} ${err}`);
             } else {
-                logUtils.logMessage(TAG, MSG_FAILED_OPEN_NEW_CONNECT_TO_MONGO);
+                logUtils.logMessage(TAG, MSG_FAILED_OPEN_NEW_CONNECT_TO_FIREBASE);
             }
             
             success = false;
+            isConnectedFirebase = false;
         }
 
         return success;
     },
 
     isConnected: function() {
-        try {
-            
-            /*
-            if (MONGOOSE_CONN_STATE_CONNECTED === mongoose.connection.readyState) {
-                return true;
-            } else {
-                return false;
-            }
-            */
-
-        } catch (err) {
-            return false;
-        }
+        return isConnectedFirebase;
     }
 
 }

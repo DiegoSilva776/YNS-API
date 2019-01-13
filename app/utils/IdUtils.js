@@ -22,6 +22,24 @@ module.exports = {
         return buf.join('');
     },
 
+    getFirebaseIdFromEmail: function(email){
+        try {
+            return email.replace()
+
+        } catch (err) {
+            return false
+        }
+    },
+
+    getUserNotificationFirebaseId: function(userId, notificationId){
+        try {
+            return `${userId}_${notificationId}`;
+
+        } catch (err) {
+            return false;
+        }
+    },
+
     /**
      * Get a random integer between a range of numbers
      */
