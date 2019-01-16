@@ -12,7 +12,8 @@ module.exports = {
         DB_PORT : 27027,
         DB_NAME : "yns_v1",
         FIREBASE_CRED_PATH: "../config/yns-firebase.json",
-        FIREBASE_PROJ_URL: "https://youpernotificationsystem.firebaseio.com"
+        FIREBASE_PROJ_URL: "https://youpernotificationsystem.firebaseio.com",
+        GOOGLE_CLOUD_STORAGE_BUCKET: "gs://youpernotificationsystem.appspot.com"
     }
 
 };

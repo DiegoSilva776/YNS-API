@@ -27,7 +27,8 @@ module.exports = {
 
             firebaseAdmin.initializeApp({
                 credential: firebaseAdmin.credential.cert(serviceAccount),
-                databaseURL: env.vars.FIREBASE_PROJ_URL
+                databaseURL: env.vars.FIREBASE_PROJ_URL,
+                storageBucket: env.vars.GOOGLE_CLOUD_STORAGE_BUCKET
             });
 
             isConnectedFirebase = true;

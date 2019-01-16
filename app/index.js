@@ -13,7 +13,7 @@
  * https://opensource.org/licenses/MIT
  */
 
-const APP_NAME = "YouperNotificationSystem - YNS API, v0.0.6"
+const APP_NAME = "YouperNotificationSystem - YNS API, v0.0.7"
 
 var express    = require('express');
 var helmet     = require('helmet');
@@ -27,6 +27,7 @@ var dbUtils   = require('./utils/DbUtils');
 var userController = require('./controllers/UserController')
 var notificationController = require('./controllers/NotificationController')
 var userNotificationController = require('./controllers/UserNotificationController')
+var storageController = require('./controllers/StorageController');
 
 /**
  * Initialization
@@ -34,7 +35,22 @@ var userNotificationController = require('./controllers/UserNotificationControll
 // Creates an instance of the webserver and the router of the endpoints of the API
 var app = express();
 
+var allowCrossDomain = function(req, res, next) {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With, cache-control');
+
+  // intercept OPTIONS method
+  if ('OPTIONS' == req.method) {
+    res.sendStatus(200);
+  }
+  else {
+    next();
+  }
+};
+
 // Sets up an HTTP body parser to get data from json inputs
+app.use(allowCrossDomain);
 app.use(helmet());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -129,6 +145,18 @@ app.delete('/api/userNotifications', [
   check('notificationId').isString().isLength({ min: 1, max: 50 }).trim()
 ], (req, res) => {
   userNotificationController.deleteUserNotification(req, res);
+});
+
+/**
+ * Image uploads
+ */
+app.post('/api/imageUpload', [
+  check('userEmail').isEmail().normalizeEmail(),
+  check('filename').isString(),
+  check('fileExtension').isString(),
+  check('base64String').isString()
+], (req, res) => {
+  storageController.uploadImage(req, res);
 });
 
 /**
