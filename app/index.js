@@ -13,7 +13,7 @@
  * https://opensource.org/licenses/MIT
  */
 
-const APP_NAME = "YouperNotificationSystem - YNS API, v0.0.7"
+const APP_NAME = "YouperNotificationSystem - YNS API, v0.0.8"
 
 var express    = require('express');
 var helmet     = require('helmet');
@@ -47,6 +47,14 @@ var allowCrossDomain = function(req, res, next) {
   else {
     next();
   }
+};
+
+// Increases the size of the maximum payload
+bodyParser.json.limit = '50mb';
+bodyParser.json.extended = true;
+bodyParser.json.urlencoded = {
+  limit: '50mb', 
+  extended: true
 };
 
 // Sets up an HTTP body parser to get data from json inputs
