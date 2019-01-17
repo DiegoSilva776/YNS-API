@@ -13,7 +13,7 @@
  * https://opensource.org/licenses/MIT
  */
 
-const APP_NAME = "YouperNotificationSystem - YNS API, v0.0.10"
+const APP_NAME = "YouperNotificationSystem - YNS API, v0.0.11"
 
 var express    = require('express');
 var helmet     = require('helmet');
@@ -80,7 +80,7 @@ app.get('/api/users/:email', [
 app.post('/api/users', [
   check('email').isEmail().normalizeEmail(),
   check('name').isLength({ min: 1, max: 150 }).trim(),
-  check('profilePic').isString().isLength({ max: 350 }),
+  check('profilePic').isString(),
   check('latestNotification').isString().isLength({ max: 350 }).trim(),
 ], (req, res) => {
   userController.upsertUser(req, res);
