@@ -13,7 +13,7 @@
  * https://opensource.org/licenses/MIT
  */
 
-const APP_NAME = "YouperNotificationSystem - YNS API, v0.0.11"
+const APP_NAME = "YouperNotificationSystem - YNS API, v0.0.12"
 
 var express    = require('express');
 var helmet     = require('helmet');

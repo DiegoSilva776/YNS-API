@@ -13,6 +13,7 @@ var frbAdmin = require("firebase-admin");
 
 const logUtils = require('../utils/LogUtils.js');
 const evalUtils = require('../utils/EvalUtils.js');
+const idUtils = require('../utils/IdUtils.js');
 
 var self = {
 
@@ -39,8 +40,9 @@ var self = {
                 evalUtils.isValidVal(filename) &&
                 evalUtils.isValidVal(fileExtension) &&
                 evalUtils.isValidVal(base64String)) {
+                const UID = idUtils.getUniqueId(8);
 
-                var storageFilename = `profile_img_${userFirebaseUid}_${filename}${fileExtension}`;
+                var storageFilename = `profile_img_${userFirebaseUid}_${filename}_${UID}_${fileExtension}`;
 
                 const base64Image = base64String.split(';base64,').pop();
                 fs.writeFile(storageFilename, base64Image, {encoding: 'base64'}, function(err) {
